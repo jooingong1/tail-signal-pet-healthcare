@@ -111,9 +111,10 @@
   </style>
   <style>
     /* 참고 이미지의 줄무늬 옷을 입은 콘이 캐릭터 */
-    .app-header .header-dog-character{width:92px!important;height:122px!important;filter:none!important}
+    /* 헤더 높이를 넘지 않도록 스프라이트 한 프레임을 실제 비율로 표시 */
+    .app-header .header-dog-character{width:54px!important;height:72px!important;filter:none!important}
     .app-header .header-dog-character::before{
-      width:92px!important;height:122px!important;
+      width:54px!important;height:72px!important;
       background-image:url("콘이_상단_스프라이트.png?v=1")!important;
       background-size:400% 100%!important;
       background-repeat:no-repeat!important;
@@ -128,9 +129,9 @@
     }
     @keyframes koniHeaderWalk{0%,24.9%{background-position:0 0}25%,49.9%{background-position:33.333% 0}50%,74.9%{background-position:66.667% 0}75%,100%{background-position:100% 0}}
     @keyframes koniHeaderSleep{0%,24.9%{background-position:0 0}25%,49.9%{background-position:33.333% 0}50%,74.9%{background-position:66.667% 0}75%,100%{background-position:100% 0}}
-    .app-header .header-dog-character{top:15px!important;transition:transform .2s ease!important}
+    .app-header .header-dog-character{top:5px!important;transition:transform .2s ease!important}
     .app-header .header-dog-character.is-running::before{animation-duration:.58s!important}
-    @media(max-width:600px){.app-header .header-dog-character{width:64px!important;height:84px!important}.app-header .header-dog-character::before{width:64px!important;height:84px!important}}
+    @media(max-width:600px){.app-header .header-dog-character{width:46px!important;height:61px!important;top:8px!important}.app-header .header-dog-character::before{width:46px!important;height:61px!important}}
   </style>
   <style>
     /* 시안 3: 손그림 파스텔 꼬리 로고 */
@@ -521,3 +522,4 @@
   </script>
 </body>
 </html>
+
