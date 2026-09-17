@@ -1,0 +1,21 @@
+{
+  "danger_classes": {
+    "chocolate": {"aliases": ["초콜릿", "초콜릿·카페인", "chocolate"], "message": "초콜릿·카페인은 강아지에게 위험할 수 있어 먹이지 마세요."},
+    "grape": {"aliases": ["포도", "grape"], "message": "포도·건포도는 위험할 수 있어 먹이지 마세요."},
+    "xylitol": {"aliases": ["자일리톨", "xylitol"], "message": "자일리톨은 저혈당과 간 손상 위험이 있어 먹이지 마세요."},
+    "onion_garlic": {"aliases": ["양파", "마늘", "부추", "양파·마늘·부추"], "message": "양파·마늘·부추가 들어간 음식은 먹이지 마세요."},
+    "alcohol": {"aliases": ["술", "알코올", "alcohol"], "message": "알코올이 들어간 음식과 음료는 먹이지 마세요."},
+    "macadamia": {"aliases": ["마카다미아", "macadamia"], "message": "마카다미아는 강아지에게 위험할 수 있어 먹이지 마세요."}
+  },
+  "safe_classes": {
+    "dog_food": {"aliases": ["사료", "dog food"], "message": "반려견용으로 만들어진 제품인지 성분표와 급여량을 확인해 주세요."},
+    "carrot": {"aliases": ["당근", "carrot"], "message": "일반적으로 급여되는 음식도 조리법·양·개별 건강 상태를 확인해 주세요."},
+    "apple": {"aliases": ["사과", "apple"], "message": "씨와 심을 제거했는지 확인하고 소량만 급여하세요."},
+    "bakery": {"aliases": ["베이커리", "bakery"], "message": "사람용 베이커리 음식은 설탕·지방·초콜릿 성분을 확인하고 급여하지 않는 것이 안전합니다."},
+    "dessert": {"aliases": ["디저트", "dessert"], "message": "디저트는 설탕·초콜릿·자일리톨이 포함될 수 있어 강아지에게 먹이지 마세요."},
+    "fruit": {"aliases": ["과일", "fruit"], "message": "과일 종류에 따라 위험할 수 있으므로 씨·껍질을 제거하고 안전한 종류인지 확인하세요."},
+    "main_dish": {"aliases": ["메인요리", "main dish", "main_dish"], "message": "사람용 메인 요리는 양념·양파·마늘·염분이 들어갈 수 있어 성분을 확인하세요."},
+    "meat_seafood": {"aliases": ["고기", "육류", "해산물", "meat seafood", "meat_seafood"], "message": "양념·뼈·가시·날것 여부를 확인하고 소량만 급여하세요."},
+    "vegetable": {"aliases": ["채소", "vegetable"], "message": "채소 종류와 조리법에 따라 달라지므로 강아지에게 안전한 종류인지 확인하세요."}
+  }
+}

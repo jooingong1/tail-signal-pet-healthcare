@@ -1,0 +1,52 @@
+{
+  "classes": {
+    "normal": {
+      "aliases": ["정상", "정상변", "normal_stool", "Normal"],
+      "level": "normal",
+      "message": "사진상 정상 범주로 분류되었지만 평소 배변과 함께 비교해 주세요.",
+      "recommendation": "배변 횟수·색·냄새와 식사량, 물 섭취량, 활력을 함께 기록해 주세요."
+    },
+    "soft_stool": {
+      "aliases": ["무른변", "연변", "soft", "soft_stool", "SoftPoop"],
+      "level": "observe",
+      "message": "무른 변 가능성이 있어 배변 변화를 관찰해 주세요.",
+      "recommendation": "반복되는지, 구토·식욕 저하·처짐이 함께 있는지 기록하고 물 섭취를 확인해 주세요."
+    },
+    "diarrhea": {
+      "aliases": ["설사", "묽은변", "diarrhea", "Diarrhoea"],
+      "level": "consult",
+      "message": "설사 가능성이 있어 상태와 반복 여부를 확인해 주세요.",
+      "recommendation": "반복 설사, 탈수처럼 보이는 상태, 구토, 혈액, 심한 처짐이 있으면 동물병원에 상담하세요."
+    },
+    "constipation": {
+      "aliases": ["변비", "딱딱한변", "constipation"],
+      "level": "observe",
+      "message": "딱딱하거나 배변이 어려운 상태일 가능성이 있어 관찰이 필요합니다.",
+      "recommendation": "배변 시도 횟수와 통증 반응, 물 섭취량을 기록하고 오래 지속되면 상담하세요."
+    },
+    "lack_of_water": {
+      "aliases": ["수분부족", "물부족", "lackofwater", "LackOfWater"],
+      "level": "observe",
+      "message": "수분 부족과 관련된 배변 상태일 가능성이 있어 물 섭취와 활력을 확인해 주세요.",
+      "recommendation": "물을 마시는지, 잇몸이 마르거나 처지지 않는지 확인하고 반복되면 동물병원에 상담하세요."
+    },
+    "blood_stool": {
+      "aliases": ["혈변", "피변", "blood", "bloody_stool"],
+      "level": "urgent",
+      "message": "혈액이 섞인 변으로 보이면 빠른 확인이 필요합니다.",
+      "recommendation": "반복되거나 양이 많고, 구토·창백한 잇몸·심한 처짐이 함께 있으면 즉시 동물병원에 연락하세요."
+    },
+    "black_stool": {
+      "aliases": ["흑변", "검은변", "black", "black_stool"],
+      "level": "urgent",
+      "message": "검고 타르처럼 보이는 변은 주의가 필요한 신호일 수 있습니다.",
+      "recommendation": "사진과 배변 시간을 보관하고, 반복되거나 활력 저하·구토가 있으면 바로 상담하세요."
+    },
+    "mucus_stool": {
+      "aliases": ["점액변", "점액", "mucus", "mucus_stool"],
+      "level": "consult",
+      "message": "점액이 섞인 변으로 보이면 배변 변화를 관찰해야 합니다.",
+      "recommendation": "반복 여부와 혈액·설사·복통·식욕 저하 동반 여부를 기록하고 지속되면 상담하세요."
+    }
+  }
+}
