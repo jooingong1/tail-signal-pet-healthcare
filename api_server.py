@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import gc
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -59,25 +60,8 @@ MODEL_ERROR = None
 STOOL_MODEL = None
 STOOL_MODEL_ERROR = None
 
-if YOLO is not None and MODEL_PATH.exists():
-    try:
-        MODEL = YOLO(str(MODEL_PATH))
-    except Exception as exc:  # 모델 파일이 잘못되어도 API는 상태를 반환하며 시작
-        MODEL_ERROR = str(exc)
-elif YOLO is None:
-    MODEL_ERROR = "ultralytics 패키지가 설치되지 않았습니다."
-else:
-    MODEL_ERROR = f"모델 파일이 없습니다: {MODEL_PATH}"
-
-if YOLO is not None and STOOL_MODEL_PATH.exists():
-    try:
-        STOOL_MODEL = YOLO(str(STOOL_MODEL_PATH))
-    except Exception as exc:  # 모델 파일이 잘못되어도 API는 상태를 반환하며 시작
-        STOOL_MODEL_ERROR = str(exc)
-elif YOLO is None:
-    STOOL_MODEL_ERROR = "ultralytics 패키지가 설치되지 않았습니다."
-else:
-    STOOL_MODEL_ERROR = f"배변 모델 파일이 없습니다: {STOOL_MODEL_PATH}"
+MODEL_ERROR = None if YOLO is not None and MODEL_PATH.exists() else ("ultralytics 패키지가 설치되지 않았습니다." if YOLO is None else f"모델 파일이 없습니다: {MODEL_PATH}")
+STOOL_MODEL_ERROR = None if YOLO is not None and STOOL_MODEL_PATH.exists() else ("ultralytics 패키지가 설치되지 않았습니다." if YOLO is None else f"배변 모델 파일이 없습니다: {STOOL_MODEL_PATH}")
 
 
 def load_optional_yolo_model(path: Path, label: str):
@@ -91,8 +75,24 @@ def load_optional_yolo_model(path: Path, label: str):
         return None, str(exc)
 
 
-SKIN_MODEL, SKIN_MODEL_ERROR = load_optional_yolo_model(SKIN_MODEL_PATH, "피부")
-EYE_MODEL, EYE_MODEL_ERROR = load_optional_yolo_model(EYE_MODEL_PATH, "안구")
+SKIN_MODEL = None
+EYE_MODEL = None
+SKIN_MODEL_ERROR = None if YOLO is not None and SKIN_MODEL_PATH.exists() else "피부 모델 파일이 없습니다."
+EYE_MODEL_ERROR = None if YOLO is not None and EYE_MODEL_PATH.exists() else "안구 모델 파일이 없습니다."
+
+def get_model(path: Path):
+    if YOLO is None:
+        return None, "ultralytics 패키지가 설치되지 않았습니다."
+    if not path.exists():
+        return None, f"모델 파일이 없습니다: {path}"
+    try:
+        return YOLO(str(path)), None
+    except Exception as exc:
+        return None, str(exc)
+
+def release_model(model):
+    del model
+    gc.collect()
 
 
 def normalize(value: str) -> str:
@@ -161,20 +161,21 @@ def health() -> dict[str, Any]:
 async def food_check(file: UploadFile = File(...)) -> JSONResponse:
     if not file.content_type or not file.content_type.startswith("image/"):
         return JSONResponse({"status": "invalid_file", "message": "이미지 파일만 업로드해 주세요."}, status_code=400)
-    if MODEL is None:
+    model, model_error = get_model(MODEL_PATH)
+    if model is None:
         return JSONResponse(
             {
                 "status": "model_missing",
                 "model_ready": False,
                 "message": "학습된 음식 판별 모델을 모델/food_best.pt에 넣어 주세요.",
-                "detail": MODEL_ERROR,
+                "detail": model_error,
             },
             status_code=503,
         )
 
     try:
         image = Image.open(io.BytesIO(await file.read())).convert("RGB")
-        result = MODEL.predict(source=image, imgsz=224, verbose=False)[0]
+        result = model.predict(source=image, imgsz=224, verbose=False)[0]
         if result.probs is None:
             return JSONResponse(
                 {"status": "wrong_model_task", "message": "Classification 모델(best-cls.pt)을 사용해 주세요."},
@@ -198,26 +199,30 @@ async def food_check(file: UploadFile = File(...)) -> JSONResponse:
         }
     except Exception as exc:
         return JSONResponse({"status": "inference_error", "message": "사진을 판별하지 못했습니다.", "detail": str(exc)}, status_code=500)
+    finally:
+        if model is not None:
+            release_model(model)
 
 
 @app.post("/api/stool-check")
 async def stool_check(file: UploadFile = File(...)) -> JSONResponse:
     if not file.content_type or not file.content_type.startswith("image/"):
         return JSONResponse({"status": "invalid_file", "message": "이미지 파일만 업로드해 주세요."}, status_code=400)
-    if STOOL_MODEL is None:
+    model, model_error = get_model(STOOL_MODEL_PATH)
+    if model is None:
         return JSONResponse(
             {
                 "status": "model_missing",
                 "model_ready": False,
                 "message": "학습된 배변 판별 모델을 모델/stool_best.pt에 넣어 주세요.",
-                "detail": STOOL_MODEL_ERROR,
+                "detail": model_error,
             },
             status_code=503,
         )
 
     try:
         image = Image.open(io.BytesIO(await file.read())).convert("RGB")
-        result = STOOL_MODEL.predict(source=image, imgsz=224, verbose=False)[0]
+        result = model.predict(source=image, imgsz=224, verbose=False)[0]
         if result.probs is None:
             return JSONResponse(
                 {"status": "wrong_model_task", "message": "배변 Classification 모델(best-cls.pt)을 사용해 주세요."},
@@ -244,6 +249,9 @@ async def stool_check(file: UploadFile = File(...)) -> JSONResponse:
         }
     except Exception as exc:
         return JSONResponse({"status": "inference_error", "message": "배변 사진을 판별하지 못했습니다.", "detail": str(exc)}, status_code=500)
+    finally:
+        if model is not None:
+            release_model(model)
 
 
 @app.post("/api/pet-health-check")
@@ -253,8 +261,8 @@ async def pet_health_check(type: str, file: UploadFile = File(...)) -> JSONRespo
     if not file.content_type or not file.content_type.startswith("image/"):
         return JSONResponse({"status": "invalid_file", "message": "이미지 파일만 업로드해 주세요."}, status_code=400)
 
-    model = SKIN_MODEL if type == "skin" else EYE_MODEL
-    model_error = SKIN_MODEL_ERROR if type == "skin" else EYE_MODEL_ERROR
+    model_path = SKIN_MODEL_PATH if type == "skin" else EYE_MODEL_PATH
+    model, model_error = get_model(model_path)
     label = "피부" if type == "skin" else "안구"
     if model is None:
         return JSONResponse(
@@ -296,6 +304,9 @@ async def pet_health_check(type: str, file: UploadFile = File(...)) -> JSONRespo
         }
     except Exception as exc:
         return JSONResponse({"status": "inference_error", "message": f"{label} 사진을 판별하지 못했습니다.", "detail": str(exc)}, status_code=500)
+    finally:
+        if model is not None:
+            release_model(model)
 
 
 @app.get("/api/nearby-vets")
